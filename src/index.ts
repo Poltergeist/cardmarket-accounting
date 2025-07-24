@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { CsvImportHandler } from "./features/csv-import/handlers/csvImportHandler";
+import { OrdersImportHandler } from "./features/csv-import/handlers/ordersSalesHandler";
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
 
@@ -53,10 +54,32 @@ async function main() {
       }
     });
 
+  program
+    .command("import-sales")
+    .description("Import sales data from a CSV file")
+    .requiredOption("-f, --file <path>", "Path to CSV file")
+    .option("-o, --output <path>", "Output directory", "data/sales/")
+    .action(async (options) => {
+      try {
+        console.log("Importing from CSV:", options.file);
+
+        const handler = new OrdersImportHandler({
+          filePath: options.file,
+          outputDirectory: options.output,
+        });
+
+        await handler.import();
+
+        console.log(`Successfully imported orders`);
+      } catch (error) {
+        console.error("Error:", error);
+        process.exit(1);
+      }
+    });
+
   // Add similar commands for API and JSON importing
 
   await program.parseAsync();
 }
 
 main().catch(console.error);
-

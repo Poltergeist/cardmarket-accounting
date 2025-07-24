@@ -27,3 +27,9 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+#Journal files
+journal
+journal.hledger
+
+data/
