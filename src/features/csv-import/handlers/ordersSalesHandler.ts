@@ -1,5 +1,6 @@
 import { CsvParser } from "../../../infrastructure/csv/csvParser";
 import { ImportSalesCommand } from "../commands/importSalesCommand";
+import { salesImportCsvSchema } from "../schemas/salesImportCsvSchema";
 import fs from "fs";
 import path from "path";
 
@@ -21,10 +22,10 @@ export class OrdersImportHandler {
           try {
             await fs.promises.writeFile(
               path.join(this.command.outputDirectory, `${sale.OrderID}.json`),
-              JSON.stringify(sale, null, 2),
+              JSON.stringify(salesImportCsvSchema.parse(sale), null, 2),
             );
           } catch (error) {
-            console.error("Error writing file:", error);
+            console.error("Error writing file:", error, sale);
           }
         }),
       );
