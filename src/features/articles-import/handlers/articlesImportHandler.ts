@@ -1,5 +1,6 @@
 import { CsvParser } from "../../../infrastructure/csv/csvParser";
 import { ArticlesImportCommand } from "../commands/articlesImportCommand";
+import { articlesImportCsvSchema } from "../schemas/articlesImportCsvSchema";
 import fs from "fs";
 import path from "path";
 
@@ -21,7 +22,11 @@ export class ArticlesImportHandler {
         if (!acc[key]) {
           acc[key] = [];
         }
-        acc[key] = [...acc[key], item];
+        try {
+          acc[key] = [...acc[key], articlesImportCsvSchema.parse(item)];
+        } catch (error) {
+          console.error("Error parsing item:", error, item);
+        }
         return acc;
       }, {});
 
