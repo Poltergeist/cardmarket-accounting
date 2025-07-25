@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { CsvImportHandler } from "./features/csv-import/handlers/csvImportHandler";
 import { OrdersImportHandler } from "./features/csv-import/handlers/ordersSalesHandler";
+import { ArticlesImportHandler } from "./features/articles-import/handlers/articlesImportHandler";
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
 
@@ -64,6 +65,29 @@ async function main() {
         console.log("Importing from CSV:", options.file);
 
         const handler = new OrdersImportHandler({
+          filePath: options.file,
+          outputDirectory: options.output,
+        });
+
+        await handler.import();
+
+        console.log(`Successfully imported orders`);
+      } catch (error) {
+        console.error("Error:", error);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command("import-articles")
+    .description("Import articles data from a CSV file")
+    .requiredOption("-f, --file <path>", "Path to CSV file")
+    .option("-o, --output <path>", "Output directory", "data/articles/")
+    .action(async (options) => {
+      try {
+        console.log("Importing from CSV:", options.file);
+
+        const handler = new ArticlesImportHandler({
           filePath: options.file,
           outputDirectory: options.output,
         });

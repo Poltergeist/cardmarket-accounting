@@ -24,7 +24,6 @@ export class OrdersImportHandler {
               JSON.stringify(sale, null, 2),
             );
           } catch (error) {
-            console.log(sale);
             console.error("Error writing file:", error);
           }
         }),
