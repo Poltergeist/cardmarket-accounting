@@ -4,6 +4,7 @@ import { OrdersImportHandler } from "./features/csv-import/handlers/ordersSalesH
 import { ArticlesImportHandler } from "./features/articles-import/handlers/articlesImportHandler";
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
+import { OrdersParseHandler } from "./features/orders-parse/handlers/ordersParseHandler";
 
 async function main() {
   const program = new Command();
@@ -95,6 +96,31 @@ async function main() {
         await handler.import();
 
         console.log(`Successfully imported orders`);
+      } catch (error) {
+        console.error("Error:", error);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command("parse-orders")
+    .description("Parse Orders which have been imported")
+    .option("-o, --orders-directory <path>", "Path to CSV file", "data/sales")
+    .option(
+      "-a, --articles-directory <path>",
+      "Path to CSV file",
+      "data/articles",
+    )
+    .action(async (options) => {
+      try {
+        const handler = new OrdersParseHandler({
+          ordersDirectory: options.ordersDirectory,
+          articlesDirectory: options.articlesDirectory,
+        });
+
+        await handler.parse();
+
+        console.log(`Successfully parsed orders`);
       } catch (error) {
         console.error("Error:", error);
         process.exit(1);
