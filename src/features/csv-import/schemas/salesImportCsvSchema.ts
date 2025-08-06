@@ -1,19 +1,25 @@
 import { z } from "zod";
 
-const GermanNumberSchema = z.string().transform((val, ctx) => {
-  const normalized = val.replace(",", ".");
-  const num = Number(normalized);
+const GermanNumberSchema = z
+  .union([z.string(), z.number()])
+  .transform((val, ctx) => {
+    if (typeof val === "number") {
+      return val; // Skip transformation if it's already a number
+    }
 
-  if (isNaN(num)) {
-    ctx.addIssue({
-      code: "custom",
-      message: `Invalid number: "${val}"`,
-    });
-    return z.NEVER;
-  }
+    const normalized = val.replace(",", ".");
+    const num = Number(normalized);
 
-  return num;
-});
+    if (isNaN(num)) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Invalid number: "${val}"`,
+      });
+      return z.NEVER;
+    }
+
+    return num;
+  });
 
 export const salesImportCsvSchema = z.object({
   OrderID: z.string(),
