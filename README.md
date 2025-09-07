@@ -48,15 +48,106 @@ If the CLI exposes flags/options, you’ll typically see them via:
 pnpm exec tsx src/index.ts --help
 ```
 
-### Run directly (no build step)
+### Available Commands
+
+The CLI provides several commands for different data processing workflows:
+
+#### Import CSV to Ledger
+
+Convert a generic CSV file directly to hledger journal format:
 
 ```bash
-# Example: process a CSV export
-pnpm exec tsx src/index.ts path/to/cardmarket-export.csv
-
-# You can pass additional options if implemented
-pnpm exec tsx src/index.ts path/to/cardmarket-export.csv --out ./out --format json
+pnpm exec tsx src/index.ts import-csv -f path/to/data.csv -o output.journal
 ```
+
+Options:
+
+- `-f, --file <path>`: Path to CSV file (required)
+- `-o, --output <path>`: Output hledger file (default: "ledger.journal")
+- `-c, --currency <currency>`: Default currency (default: "USD")
+- `-m, --mappings <path>`: Path to account mappings JSON file
+
+#### Import Sales Data
+
+Import Cardmarket sales data from CSV to JSON format:
+
+```bash
+pnpm exec tsx src/index.ts import-sales -f path/to/sales.csv -o data/sales/
+```
+
+Options:
+
+- `-f, --file <path>`: Path to sales CSV file (required)
+- `-o, --output <path>`: Output directory (default: "data/sales/")
+
+#### Import Articles Data
+
+Import Cardmarket articles data from CSV to JSON format:
+
+```bash
+pnpm exec tsx src/index.ts import-articles -f path/to/articles.csv -o data/articles/
+```
+
+Options:
+
+- `-f, --file <path>`: Path to articles CSV file (required)
+- `-o, --output <path>`: Output directory (default: "data/articles/")
+
+#### Parse Orders
+
+Validate and parse previously imported orders and articles data:
+
+```bash
+pnpm exec tsx src/index.ts parse-orders -o data/sales -a data/articles
+```
+
+Options:
+
+- `-o, --orders-directory <path>`: Path to orders JSON directory (default: "data/sales")
+- `-a, --articles-directory <path>`: Path to articles JSON directory (default: "data/articles")
+
+#### Generate Ledger from JSON
+
+**New!** Generate hledger journal from previously imported JSON orders and articles:
+
+```bash
+pnpm exec tsx src/index.ts json-to-ledger --orders-directory data/sales --articles-directory data/articles --output cardmarket.journal
+```
+
+Options:
+
+- `--orders-directory <path>`: Path to orders JSON directory (default: "data/sales")
+- `--articles-directory <path>`: Path to articles JSON directory (default: "data/articles")
+- `--output <path>`: Output path for the ledger journal (default: "cardmarket-ledger.journal")
+
+This command creates accounting transactions for:
+
+- Revenue from merchandise sales and shipping
+- Platform commission expenses
+- Cardmarket receivables
+- Individual article transactions for inventory tracking and cost of goods sold
+
+### Workflow Example
+
+A typical workflow might involve:
+
+1. **Import your Cardmarket data:**
+
+   ```bash
+   pnpm exec tsx src/index.ts import-sales -f cardmarket-sales.csv
+   pnpm exec tsx src/index.ts import-articles -f cardmarket-articles.csv
+   ```
+
+2. **Validate the imported data:**
+
+   ```bash
+   pnpm exec tsx src/index.ts parse-orders
+   ```
+
+3. **Generate accounting ledger:**
+   ```bash
+   pnpm exec tsx src/index.ts json-to-ledger --output my-cardmarket-ledger.journal
+   ```
 
 ### Build and run
 
@@ -65,7 +156,7 @@ pnpm exec tsx src/index.ts path/to/cardmarket-export.csv --out ./out --format js
 pnpm exec tsc -p tsconfig.json
 
 # Run the compiled entrypoint
-node dist/index.js path/to/cardmarket-export.csv
+node dist/index.js --help
 ```
 
 Notes:
