@@ -1,5 +1,9 @@
-import { LedgerFile, Transaction, Posting } from '../../../core/domain/models/ledger';
-import { ImportOptions } from '../../../core/domain/interfaces/importers';
+import {
+  LedgerFile,
+  Transaction,
+  Posting,
+} from "../../../core/domain/models/ledger";
+import { ImportOptions } from "../../../core/domain/interfaces/importers";
 
 export class CsvToLedgerMapper {
   private options: ImportOptions;
@@ -29,63 +33,82 @@ export class CsvToLedgerMapper {
       const descriptionField = this.detectDescriptionField(row);
       const amountField = this.detectAmountField(row);
       const categoryField = this.detectCategoryField(row);
-      
+
       if (!dateField || !amountField) {
-        console.warn('Could not detect required fields in row:', row);
+        console.warn("Could not detect required fields in row:", row);
         return null;
       }
 
       const date = this.formatDate(row[dateField]);
-      const amount = parseFloat(row[amountField].replace(/[^0-9.-]+/g, ''));
-      const description = row[descriptionField] || 'Unspecified transaction';
-      
+      const amount = parseFloat(row[amountField].replace(/[^0-9.-]+/g, ""));
+      const description = row[descriptionField] || "Unspecified transaction";
+
       // Default accounts - ideally these would come from mappings
-      const expenseAccount = row[categoryField] ? 
-        `Expenses:${row[categoryField]}` : 
-        'Expenses:Uncategorized';
-        
+      const expenseAccount = row[categoryField]
+        ? `Expenses:${row[categoryField]}`
+        : "Expenses:Uncategorized";
+
       const transaction: Transaction = {
         date,
         description,
         postings: [
           {
-            account: 'Assets:Checking',
+            account: "Assets:Checking",
             amount: -amount,
-            currency: this.options.defaultCurrency || 'USD'
+            currency: this.options.defaultCurrency || "USD",
           },
           {
             account: expenseAccount,
             amount: amount,
-            currency: this.options.defaultCurrency || 'USD'
-          }
-        ]
+            currency: this.options.defaultCurrency || "USD",
+          },
+        ],
       };
-      
+
       return transaction;
     } catch (error) {
-      console.error('Error creating transaction from row:', error);
+      console.error("Error creating transaction from row:", error);
       return null;
     }
   }
 
   // Helper methods to detect fields in CSV data
   private detectDateField(row: any): string | null {
-    const possibleDateFields = ['date', 'Date', 'transaction_date', 'TransactionDate'];
+    const possibleDateFields = [
+      "date",
+      "Date",
+      "transaction_date",
+      "TransactionDate",
+    ];
     return this.findField(row, possibleDateFields);
   }
 
   private detectDescriptionField(row: any): string | null {
-    const possibleDescFields = ['description', 'Description', 'memo', 'Memo', 'note', 'Note'];
+    const possibleDescFields = [
+      "description",
+      "Description",
+      "memo",
+      "Memo",
+      "note",
+      "Note",
+    ];
     return this.findField(row, possibleDescFields);
   }
 
   private detectAmountField(row: any): string | null {
-    const possibleAmountFields = ['amount', 'Amount', 'sum', 'Sum', 'total', 'Total'];
+    const possibleAmountFields = [
+      "amount",
+      "Amount",
+      "sum",
+      "Sum",
+      "total",
+      "Total",
+    ];
     return this.findField(row, possibleAmountFields);
   }
 
   private detectCategoryField(row: any): string | null {
-    const possibleCategoryFields = ['category', 'Category', 'type', 'Type'];
+    const possibleCategoryFields = ["category", "Category", "type", "Type"];
     return this.findField(row, possibleCategoryFields);
   }
 
@@ -102,7 +125,7 @@ export class CsvToLedgerMapper {
     // Handle various date formats and convert to YYYY-MM-DD
     try {
       const date = new Date(dateStr);
-      return date.toISOString().split('T')[0];
+      return date.toISOString().split("T")[0];
     } catch (e) {
       return dateStr; // Return as is if parsing fails
     }

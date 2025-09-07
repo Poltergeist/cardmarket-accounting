@@ -1,5 +1,5 @@
-import { LedgerFile, Transaction } from '../domain/models/ledger';
-import { promises as fs } from 'fs';
+import { LedgerFile, Transaction } from "../domain/models/ledger";
+import { promises as fs } from "fs";
 
 export class HledgerFormatter {
   constructor(private ledgerFile: LedgerFile) {}
@@ -11,7 +11,12 @@ export class HledgerFormatter {
 
   validateTransaction(transaction: Transaction): boolean {
     // Basic validation rules for hledger
-    if (!transaction.date || !transaction.description || !transaction.postings || transaction.postings.length < 2) {
+    if (
+      !transaction.date ||
+      !transaction.description ||
+      !transaction.postings ||
+      transaction.postings.length < 2
+    ) {
       return false;
     }
 
