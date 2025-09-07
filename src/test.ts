@@ -1,4 +1,4 @@
-import { LedgerFile, Transaction, Posting } from "./core/domain/models/ledger";
+import { LedgerFile, Transaction } from "./core/domain/models/ledger";
 // import { ImportOptions } from "./core/domain/interfaces/importers";
 
 const ledgerFile = new LedgerFile();

@@ -1,7 +1,7 @@
 import { LedgerFile } from "../../../core/domain/models/ledger";
 import {
   DataImporter,
-  ImportOptions,
+  // ImportOptions - not used but part of interface
 } from "../../../core/domain/interfaces/importers";
 import { CsvProcessingService } from "../../../shared/services/csvProcessingService";
 import { ErrorHandler } from "../../../shared/utils/errorHandler";

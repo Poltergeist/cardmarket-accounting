@@ -5,6 +5,9 @@ node_modules/
 dist/
 build/
 
+# Coverage reports
+coverage/
+
 # TypeScript
 *.tsbuildinfo
 
