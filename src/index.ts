@@ -5,6 +5,8 @@ import { ArticlesImportHandler } from "./features/articles-import/handlers/artic
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
 import { OrdersParseHandler } from "./features/orders-parse/handlers/ordersParseHandler";
+import { ErrorHandler } from "./shared/utils/errorHandler";
+import { logInfo } from "./shared/utils/logger";
 
 async function main() {
   const program = new Command();
@@ -49,9 +51,11 @@ async function main() {
         const formatter = new HledgerFormatter(ledgerFile);
 
         await formatter.writeToFile(options.output);
-        console.log(`Successfully created hledger file: ${options.output}`);
+        logInfo("Successfully created hledger file", {
+          output: options.output,
+        });
       } catch (error) {
-        console.error("Error:", error);
+        ErrorHandler.handle(error, "CSV import command");
         process.exit(1);
       }
     });
@@ -63,7 +67,10 @@ async function main() {
     .option("-o, --output <path>", "Output directory", "data/sales/")
     .action(async (options) => {
       try {
-        console.log("Importing from CSV:", options.file);
+        logInfo("Starting sales import", {
+          file: options.file,
+          output: options.output,
+        });
 
         const handler = new OrdersImportHandler({
           filePath: options.file,
@@ -72,9 +79,9 @@ async function main() {
 
         await handler.import();
 
-        console.log(`Successfully imported orders`);
+        logInfo("Successfully imported orders");
       } catch (error) {
-        console.error("Error:", error);
+        ErrorHandler.handle(error, "Sales import command");
         process.exit(1);
       }
     });
@@ -86,7 +93,10 @@ async function main() {
     .option("-o, --output <path>", "Output directory", "data/articles/")
     .action(async (options) => {
       try {
-        console.log("Importing from CSV:", options.file);
+        logInfo("Starting articles import", {
+          file: options.file,
+          output: options.output,
+        });
 
         const handler = new ArticlesImportHandler({
           filePath: options.file,
@@ -95,9 +105,9 @@ async function main() {
 
         await handler.import();
 
-        console.log(`Successfully imported orders`);
+        logInfo("Successfully imported articles");
       } catch (error) {
-        console.error("Error:", error);
+        ErrorHandler.handle(error, "Articles import command");
         process.exit(1);
       }
     });
@@ -120,9 +130,9 @@ async function main() {
 
         await handler.parse();
 
-        console.log(`Successfully parsed orders`);
+        logInfo("Successfully parsed orders");
       } catch (error) {
-        console.error("Error:", error);
+        ErrorHandler.handle(error, "Orders parsing command");
         process.exit(1);
       }
     });
@@ -132,4 +142,7 @@ async function main() {
   await program.parseAsync();
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  ErrorHandler.handle(error, "Application startup");
+  process.exit(1);
+});

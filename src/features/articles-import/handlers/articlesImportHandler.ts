@@ -1,47 +1,76 @@
-import { CsvParser } from "../../../infrastructure/csv/csvParser";
+import { CsvProcessingService } from "../../../shared/services/csvProcessingService";
+import { FileWriterService } from "../../../shared/services/fileWriterService";
+import { ErrorHandler } from "../../../shared/utils/errorHandler";
 import { ArticlesImportCommand } from "../commands/articlesImportCommand";
 import { articlesImportCsvSchema } from "../schemas/articlesImportCsvSchema";
-import fs from "fs";
-import path from "path";
+import { logInfo } from "../../../shared/utils/logger";
 
 export class ArticlesImportHandler {
-  private csvParser: CsvParser; // Replace with actual CsvParser type
-  private command: ArticlesImportCommand; // Replace with actual articlesImportCommand type
+  private csvProcessingService: CsvProcessingService;
+  private fileWriterService: FileWriterService;
+  private command: ArticlesImportCommand;
 
   constructor(command: ArticlesImportCommand) {
-    this.csvParser = new CsvParser();
+    this.csvProcessingService = new CsvProcessingService();
+    this.fileWriterService = new FileWriterService();
     this.command = command;
   }
 
   async import(): Promise<void> {
     try {
-      const csvData = await this.csvParser.parse(this.command.filePath, ";");
-      // Now write for each sale in csvData a file in the output directory
-      const grouped = csvData.reduce((acc, item) => {
-        const key = item["Shipment nr."];
-        if (!acc[key]) {
-          acc[key] = [];
-        }
-        try {
-          acc[key] = [...acc[key], articlesImportCsvSchema.parse(item)];
-        } catch (error) {
-          console.error("Error parsing item:", error, item);
-        }
-        return acc;
-      }, {});
+      logInfo("Starting articles import", { filePath: this.command.filePath });
 
-      for (const [id, group] of Object.entries(grouped)) {
-        try {
-          await fs.promises.writeFile(
-            path.join(this.command.outputDirectory, `${id}.json`),
-            JSON.stringify(group, null, 2),
-          );
-        } catch (error) {
-          console.error("Error writing file:", error);
-        }
-      }
+      const csvData = await this.csvProcessingService.processFile(
+        this.command.filePath,
+        ";",
+      );
+
+      // Group articles by shipment number
+      const grouped = this.groupByShipment(csvData);
+
+      // Write each shipment group to a separate file
+      await this.fileWriterService.writeMultipleJson(
+        grouped,
+        this.command.outputDirectory,
+      );
+
+      logInfo("Articles import completed successfully", {
+        shipmentsProcessed: Object.keys(grouped).length,
+      });
     } catch (error) {
-      console.error("Error writing File:", error);
+      throw ErrorHandler.handle(error, "Articles import");
     }
+  }
+
+  private groupByShipment(csvData: any[]): Record<string, any[]> {
+    const grouped: Record<string, any[]> = {};
+
+    for (const item of csvData) {
+      const key = item["Shipment nr."];
+      if (!key) {
+        ErrorHandler.warn(
+          "Skipping item without shipment number",
+          "Articles import",
+          { item },
+        );
+        continue;
+      }
+
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+
+      try {
+        const validatedItem = articlesImportCsvSchema.parse(item);
+        grouped[key].push(validatedItem);
+      } catch (error) {
+        ErrorHandler.warn("Skipping invalid item", "Articles import", {
+          item,
+          error,
+        });
+      }
+    }
+
+    return grouped;
   }
 }
