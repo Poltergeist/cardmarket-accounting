@@ -5,6 +5,7 @@ import { ArticlesImportHandler } from "./features/articles-import/handlers/handl
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
 import { OrdersParseHandler } from "./features/orders-parse/handlers/handler";
+import { JsonToLedgerHandler } from "./features/orders-parse/handlers/jsonToLedgerHandler";
 import { ErrorHandler } from "./shared/utils/errorHandler";
 import { logInfo } from "./shared/utils/logger";
 
@@ -133,6 +134,41 @@ async function main() {
         logInfo("Successfully parsed orders");
       } catch (error) {
         ErrorHandler.handle(error, "Orders parsing command");
+        process.exit(1);
+      }
+    });
+
+  program
+    .command("json-to-ledger")
+    .description("Generate ledger file from imported JSON orders and articles")
+    .option(
+      "--orders-directory <path>",
+      "Path to orders JSON directory",
+      "data/sales",
+    )
+    .option(
+      "--articles-directory <path>",
+      "Path to articles JSON directory",
+      "data/articles",
+    )
+    .option(
+      "--output <path>",
+      "Output path for the ledger journal",
+      "cardmarket-ledger.journal",
+    )
+    .action(async (options) => {
+      try {
+        const handler = new JsonToLedgerHandler({
+          ordersDirectory: options.ordersDirectory,
+          articlesDirectory: options.articlesDirectory,
+          outputPath: options.output,
+        });
+
+        await handler.generateLedger();
+
+        logInfo("Successfully generated ledger from JSON data");
+      } catch (error) {
+        ErrorHandler.handle(error, "JSON to ledger command");
         process.exit(1);
       }
     });
