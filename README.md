@@ -109,34 +109,93 @@ TypeScript is configured to:
 - Format with Prettier:
 
   ```bash
-  pnpm exec prettier --write .
+  pnpm run format
+  ```
+
+- Check formatting:
+
+  ```bash
+  pnpm run format:check
+  ```
+
+- Run linter:
+
+  ```bash
+  pnpm run lint
+  ```
+
+- Fix linting issues:
+
+  ```bash
+  pnpm run lint:fix
   ```
 
 - Type-check:
 
   ```bash
-  pnpm exec tsc --noEmit
+  pnpm run type-check
   ```
 
 - Build:
   ```bash
-  pnpm exec tsc -p tsconfig.json
+  pnpm run build
   ```
 
 ## Testing
 
-There are currently no automated tests defined (the default `test` script exits with an error). If you plan to add tests, consider:
+The project uses Jest for testing with TypeScript support. Tests are located in the `tests/` directory.
 
-- Vitest or Jest for unit tests
-- A sample fixture CSV in a `tests/` or `__tests__/` folder
-- End-to-end tests invoking the CLI on fixture data
-
-Example (after adding Vitest):
+Available test commands:
 
 ```bash
-pnpm dlx vitest init
+# Run all tests
 pnpm test
+
+# Run tests in watch mode
+pnpm run test:watch
+
+# Run tests with coverage report
+pnpm run test:coverage
 ```
+
+### Test Structure
+
+- **Unit tests**: Core domain models and services (`tests/ledger.test.ts`, `tests/hledgerFormatter.test.ts`)
+- **Integration tests**: CLI functionality (`tests/cli.test.ts`)
+
+Example test file structure:
+
+```
+tests/
+├── ledger.test.ts           # Tests for LedgerFile and Transaction models
+├── hledgerFormatter.test.ts # Tests for HledgerFormatter service
+└── cli.test.ts             # CLI integration tests
+```
+
+## Continuous Integration
+
+The project uses GitHub Actions for automated CI/CD. The workflow runs on every push and pull request to the `main` branch.
+
+### CI Pipeline
+
+The CI pipeline performs the following checks:
+
+1. **Type checking** - Ensures TypeScript compiles without errors
+2. **Code formatting** - Verifies code is properly formatted with Prettier
+3. **Linting** - Runs ESLint to catch code quality issues
+4. **Building** - Compiles TypeScript to JavaScript
+5. **Testing** - Runs the full test suite with coverage reporting
+
+The pipeline runs on both Node.js 18.x and 20.x to ensure compatibility.
+
+### Coverage Reporting
+
+Test coverage reports are automatically generated and can be uploaded to Codecov. Coverage reports include:
+
+- Statement coverage
+- Branch coverage
+- Function coverage
+- Line coverage
 
 ## Contributing
 
@@ -146,14 +205,17 @@ Contributions are welcome!
    ```bash
    git checkout -b feat/your-feature
    ```
-2. Install dependencies and ensure type-checks pass:
+2. Install dependencies and run the full validation suite:
    ```bash
    pnpm install
-   pnpm exec tsc --noEmit
+   pnpm run type-check
+   pnpm run lint
+   pnpm run format:check
+   pnpm test
    ```
 3. Format your changes:
    ```bash
-   pnpm exec prettier --write .
+   pnpm run format
    ```
 4. Commit with clear messages and open a pull request.
 

@@ -1,7 +1,7 @@
 import {
   LedgerFile,
   Transaction,
-  Posting,
+  // Posting - may be used in future mapping logic
 } from "../../../core/domain/models/ledger";
 import { ImportOptions } from "../../../core/domain/interfaces/importers";
 import { ErrorHandler } from "../../../shared/utils/errorHandler";
@@ -138,7 +138,7 @@ export class CsvToLedgerMapper {
     try {
       const date = new Date(dateStr);
       return date.toISOString().split("T")[0];
-    } catch (e) {
+    } catch {
       return dateStr; // Return as is if parsing fails
     }
   }
