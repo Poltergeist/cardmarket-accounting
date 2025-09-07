@@ -3,28 +3,41 @@ import {
   DataImporter,
   ImportOptions,
 } from "../../../core/domain/interfaces/importers";
-import { CsvParser } from "../../../infrastructure/csv/csvParser";
+import { CsvProcessingService } from "../../../shared/services/csvProcessingService";
+import { ErrorHandler } from "../../../shared/utils/errorHandler";
 import { CsvToLedgerMapper } from "../mappers/csvToLedgerMapper";
-import { ImportCsvCommand } from "../commands/importCsvCommand";
+import { ImportCsvCommand } from "../commands/csvImportCommand";
+import { logInfo } from "../../../shared/utils/logger";
 
 export class CsvImportHandler implements DataImporter {
-  private csvParser: CsvParser;
+  private csvProcessingService: CsvProcessingService;
   private mapper: CsvToLedgerMapper;
   private command: ImportCsvCommand;
 
   constructor(command: ImportCsvCommand) {
-    this.csvParser = new CsvParser();
+    this.csvProcessingService = new CsvProcessingService();
     this.mapper = new CsvToLedgerMapper(command.options);
     this.command = command;
   }
 
   async import(): Promise<LedgerFile> {
     try {
-      const csvData = await this.csvParser.parse(this.command.filePath);
-      return this.mapper.mapToLedger(csvData);
+      logInfo("Starting CSV import to ledger", {
+        filePath: this.command.filePath,
+      });
+
+      const csvData = await this.csvProcessingService.processFile(
+        this.command.filePath,
+      );
+      const ledgerFile = this.mapper.mapToLedger(csvData);
+
+      logInfo("CSV import completed successfully", {
+        transactionsProcessed: ledgerFile.transactions.length,
+      });
+
+      return ledgerFile;
     } catch (error) {
-      console.error("Error importing CSV:", error);
-      throw new Error(`Failed to import CSV: ${(error as Error).message}`);
+      throw ErrorHandler.handle(error, "CSV import");
     }
   }
 }

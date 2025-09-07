@@ -4,6 +4,7 @@ import {
   Posting,
 } from "../../../core/domain/models/ledger";
 import { ImportOptions } from "../../../core/domain/interfaces/importers";
+import { ErrorHandler } from "../../../shared/utils/errorHandler";
 
 export class CsvToLedgerMapper {
   private options: ImportOptions;
@@ -35,18 +36,25 @@ export class CsvToLedgerMapper {
       const categoryField = this.detectCategoryField(row);
 
       if (!dateField || !amountField) {
-        console.warn("Could not detect required fields in row:", row);
+        ErrorHandler.warn(
+          "Skipping row: could not detect required fields",
+          "CSV to Ledger mapping",
+          { row },
+        );
         return null;
       }
 
       const date = this.formatDate(row[dateField]);
       const amount = parseFloat(row[amountField].replace(/[^0-9.-]+/g, ""));
-      const description = row[descriptionField] || "Unspecified transaction";
+      const description = descriptionField
+        ? row[descriptionField] || "Unspecified transaction"
+        : "Unspecified transaction";
 
       // Default accounts - ideally these would come from mappings
-      const expenseAccount = row[categoryField]
-        ? `Expenses:${row[categoryField]}`
-        : "Expenses:Uncategorized";
+      const expenseAccount =
+        categoryField && row[categoryField]
+          ? `Expenses:${row[categoryField]}`
+          : "Expenses:Uncategorized";
 
       const transaction: Transaction = {
         date,
@@ -67,7 +75,11 @@ export class CsvToLedgerMapper {
 
       return transaction;
     } catch (error) {
-      console.error("Error creating transaction from row:", error);
+      ErrorHandler.warn(
+        "Failed to create transaction from row",
+        "CSV to Ledger mapping",
+        { row, error },
+      );
       return null;
     }
   }
