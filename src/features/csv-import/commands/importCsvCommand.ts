@@ -1,4 +1,4 @@
-import { ImportOptions } from '../../../core/domain/interfaces/importers';
+import { ImportOptions } from "../../../core/domain/interfaces/importers";
 
 export interface ImportCsvCommand {
   filePath: string;
