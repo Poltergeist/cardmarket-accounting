@@ -16,7 +16,14 @@ export class CsvParser {
         skip_empty_lines: true,
       });
 
-      fs.createReadStream(filePath)
+      const readStream = fs.createReadStream(filePath);
+
+      readStream.on("error", (error) => {
+        const processedError = ErrorHandler.handle(error, "CSV file reading");
+        reject(processedError);
+      });
+
+      readStream
         .pipe(parser)
         .on("data", (data) => results.push(data))
         .on("end", () => {

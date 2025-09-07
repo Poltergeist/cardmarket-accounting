@@ -1,8 +1,8 @@
 import { CsvProcessingService } from "../../../shared/services/csvProcessingService";
 import { FileWriterService } from "../../../shared/services/fileWriterService";
 import { ErrorHandler } from "../../../shared/utils/errorHandler";
-import { ArticlesImportCommand } from "../commands/articlesImportCommand";
-import { articlesImportCsvSchema } from "../schemas/articlesImportCsvSchema";
+import { ArticlesImportCommand } from "../commands/command";
+import { articlesImportCsvSchema } from "../schemas/schema";
 import { logInfo } from "../../../shared/utils/logger";
 
 export class ArticlesImportHandler {

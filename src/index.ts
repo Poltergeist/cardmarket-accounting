@@ -1,10 +1,10 @@
 import { Command } from "commander";
 import { CsvImportHandler } from "./features/csv-import/handlers/csvImportHandler";
-import { OrdersImportHandler } from "./features/csv-import/handlers/ordersSalesHandler";
-import { ArticlesImportHandler } from "./features/articles-import/handlers/articlesImportHandler";
+import { OrdersImportHandler } from "./features/csv-import/handlers/ordersImportHandler";
+import { ArticlesImportHandler } from "./features/articles-import/handlers/handler";
 import { HledgerFormatter } from "./core/services/hledgerFormatter";
 import fs from "fs";
-import { OrdersParseHandler } from "./features/orders-parse/handlers/ordersParseHandler";
+import { OrdersParseHandler } from "./features/orders-parse/handlers/handler";
 import { ErrorHandler } from "./shared/utils/errorHandler";
 import { logInfo } from "./shared/utils/logger";
 

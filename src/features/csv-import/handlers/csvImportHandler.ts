@@ -6,7 +6,7 @@ import {
 import { CsvProcessingService } from "../../../shared/services/csvProcessingService";
 import { ErrorHandler } from "../../../shared/utils/errorHandler";
 import { CsvToLedgerMapper } from "../mappers/csvToLedgerMapper";
-import { ImportCsvCommand } from "../commands/importCsvCommand";
+import { ImportCsvCommand } from "../commands/csvImportCommand";
 import { logInfo } from "../../../shared/utils/logger";
 
 export class CsvImportHandler implements DataImporter {

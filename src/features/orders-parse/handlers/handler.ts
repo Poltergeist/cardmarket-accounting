@@ -1,9 +1,9 @@
-import { OrdersParseCommand } from "../commands/ordersParseCommand";
+import { OrdersParseCommand } from "../commands/command";
 import { z } from "zod";
 import * as path from "path";
 import * as fs from "fs/promises";
-import { articlesImportCsvSchema } from "../../articles-import/schemas/articlesImportCsvSchema";
-import { salesImportCsvSchema } from "../../csv-import/schemas/salesImportCsvSchema";
+import { articlesImportCsvSchema } from "../../articles-import/schemas/schema";
+import { salesImportCsvSchema } from "../../csv-import/schemas/schema";
 import { ErrorHandler } from "../../../shared/utils/errorHandler";
 import { logInfo } from "../../../shared/utils/logger";
 
