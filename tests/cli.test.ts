@@ -60,7 +60,9 @@ describe("CLI Integration Tests", () => {
       `${tsxPath} ${cliPath} json-to-ledger --help`,
     );
 
-    expect(stdout).toContain("Generate ledger file from imported JSON orders and articles");
+    expect(stdout).toContain(
+      "Generate ledger file from imported JSON orders and articles",
+    );
     expect(stdout).toContain("--orders-directory");
     expect(stdout).toContain("--articles-directory");
     expect(stdout).toContain("--output");
