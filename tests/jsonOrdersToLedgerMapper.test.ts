@@ -61,42 +61,61 @@ describe("JsonOrdersToLedgerMapper", () => {
 
     const ledgerFile = mapper.mapToLedger([testOrderWithArticles]);
 
-    expect(ledgerFile.transactions).toHaveLength(3); // 1 main sale + 2 article transactions
+    expect(ledgerFile.transactions).toHaveLength(1); // 1 comprehensive transaction with all postings
 
-    // Test main sale transaction
+    // Test the consolidated transaction
     const saleTransaction = ledgerFile.transactions[0];
     expect(saleTransaction.date).toBe("2024-01-15");
     expect(saleTransaction.description).toBe("Cardmarket Sale - testuser (ORDER123)");
-    expect(saleTransaction.postings).toHaveLength(4);
+    expect(saleTransaction.postings).toHaveLength(9); // 3 postings per article + 2 shipping + 1 balance
     
-    // Check revenue posting
-    const revenuePosting = saleTransaction.postings.find(p => p.account === "Revenue:Cardmarket:Sales");
-    expect(revenuePosting?.amount).toBe(-25.50);
-    expect(revenuePosting?.currency).toBe("EUR");
+    // Check article revenue postings (per article with Uncategorized since no box ID in comments)
+    const lightningRevenuePosting = saleTransaction.postings.find(p => 
+      p.account === "Revenue:Cardmarket:Sales:Uncategorized" && p.comment?.includes("Lightning Bolt")
+    );
+    expect(lightningRevenuePosting?.amount).toBe(-15.00);
+    expect(lightningRevenuePosting?.currency).toBe("EUR");
+
+    const blackLotusRevenuePosting = saleTransaction.postings.find(p => 
+      p.account === "Revenue:Cardmarket:Sales:Uncategorized" && p.comment?.includes("Black Lotus")
+    );
+    expect(blackLotusRevenuePosting?.amount).toBe(-10.50);
+    expect(blackLotusRevenuePosting?.currency).toBe("EUR");
+
+    // Check commission postings (5% of each article's total)
+    const commissionPostings = saleTransaction.postings.filter(p => 
+      p.account === "Expenses:Cardmarket:Commission:Uncategorized"
+    );
+    expect(commissionPostings).toHaveLength(2);
+    expect(commissionPostings[0]?.amount).toBe(0.75); // 5% of 15.00
+    expect(commissionPostings[1]?.amount).toBe(0.53); // 5% of 10.50 (rounded up)
+
+    // Check receivable postings per article
+    const receivablePostings = saleTransaction.postings.filter(p => 
+      p.account === "Assets:Cardmarket:Receivable:Uncategorized"
+    );
+    expect(receivablePostings).toHaveLength(2);
+    expect(receivablePostings[0]?.amount).toBe(14.25); // 15.00 - 0.75
+    expect(receivablePostings[1]?.amount).toBe(9.97); // 10.50 - 0.53
 
     // Check shipping posting
-    const shippingPosting = saleTransaction.postings.find(p => p.account === "Revenue:Cardmarket:Shipping");
-    expect(shippingPosting?.amount).toBe(-5.00);
-    expect(shippingPosting?.currency).toBe("EUR");
+    const shippingRevenuePosting = saleTransaction.postings.find(p => p.account === "Revenue:Cardmarket:Shipping");
+    expect(shippingRevenuePosting?.amount).toBe(-5.00);
+    expect(shippingRevenuePosting?.currency).toBe("EUR");
 
-    // Check commission posting
-    const commissionPosting = saleTransaction.postings.find(p => p.account === "Expenses:Cardmarket:Commission");
-    expect(commissionPosting?.amount).toBe(2.55);
-    expect(commissionPosting?.currency).toBe("EUR");
+    const shippingReceivablePosting = saleTransaction.postings.find(p => p.account === "Assets:Cardmarket:Receivable:shipping");
+    expect(shippingReceivablePosting?.amount).toBe(5.00);
+    expect(shippingReceivablePosting?.currency).toBe("EUR");
+
+    // Check balancing receivable posting (no amount specified, will balance automatically)
+    const balancingPosting = saleTransaction.postings.find(p => p.account === "Assets:Cardmarket:Receivable" && !p.amount);
+    expect(balancingPosting).toBeDefined();
 
     // Check tags
     expect(saleTransaction.tags?.orderId).toBe("ORDER123");
     expect(saleTransaction.tags?.username).toBe("testuser");
     expect(saleTransaction.tags?.country).toBe("Germany");
-
-    // Test article transactions
-    const articleTransaction1 = ledgerFile.transactions[1];
-    expect(articleTransaction1.description).toContain("Lightning Bolt (English)");
-    expect(articleTransaction1.postings).toHaveLength(2);
-
-    const articleTransaction2 = ledgerFile.transactions[2];
-    expect(articleTransaction2.description).toContain("Black Lotus (English)");
-    expect(articleTransaction2.postings).toHaveLength(2);
+    expect(saleTransaction.tags?.isProfessional).toBe("false");
   });
 
   it("should handle empty orders array", () => {
