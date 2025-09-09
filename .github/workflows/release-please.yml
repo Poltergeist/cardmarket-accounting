@@ -17,6 +17,8 @@ jobs:
         id: release
         with:
           config-file: release-please-config.json
+          release-type: node
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Optional: Additional steps can be added here for publishing to npm, etc.
       # - name: Publish to npm
