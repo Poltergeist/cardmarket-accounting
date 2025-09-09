@@ -88,7 +88,7 @@ export class JsonOrdersToLedgerMapper {
       const commissionsAdjustments = [];
       if (order.Commission !== commission) {
         commissionsAdjustments.push({
-          account: "expenses:cardmarket:commission:adjustment",
+          account: "Expenses:cardmarket:commission:adjustment",
           amount: Math.round((order.Commission - commission) * 100) / 100,
           currency,
           comment: "adjustment to fix commission mismatch",
