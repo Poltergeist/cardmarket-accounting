@@ -185,8 +185,19 @@ The CI pipeline performs the following checks:
 3. **Linting** - Runs ESLint to catch code quality issues
 4. **Building** - Compiles TypeScript to JavaScript
 5. **Testing** - Runs the full test suite with coverage reporting
+6. **Commit message validation** - Enforces [Conventional Commits](https://www.conventionalcommits.org/) format
 
 The pipeline runs on both Node.js 18.x and 20.x to ensure compatibility.
+
+### Automated Releases
+
+The project uses [release-please](https://github.com/googleapis/release-please) for automated releases based on [Conventional Commits](https://www.conventionalcommits.org/):
+
+- **Semantic versioning**: Automatic version bumps based on commit types
+- **Changelog generation**: Automatically generated from commit messages
+- **Release automation**: Creates releases when changes are merged to main
+
+[![Release](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/release.yml/badge.svg)](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/release.yml)
 
 ### Coverage Reporting
 
@@ -199,7 +210,9 @@ Test coverage reports are automatically generated and can be uploaded to Codecov
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.md) for detailed information about our development process, commit message format, and coding standards.
+
+### Quick Start
 
 1. Fork the repo and create your branch from `main`:
    ```bash
@@ -217,9 +230,21 @@ Contributions are welcome!
    ```bash
    pnpm run format
    ```
-4. Commit with clear messages and open a pull request.
+4. **Important**: Use [Conventional Commits](https://www.conventionalcommits.org/) format:
+   ```bash
+   git commit -m "feat: add your feature description"
+   ```
+5. Open a pull request.
 
-Suggestions that add automated tests and basic CI are especially appreciated.
+### Commit Message Format
+
+This project enforces [Conventional Commits](https://www.conventionalcommits.org/). Examples:
+
+- `feat: add new CSV import functionality`
+- `fix: resolve parsing error with empty files`
+- `docs: update installation instructions`
+
+See our [Contributing Guide](./CONTRIBUTING.md) for complete details and examples.
 
 ## License
 

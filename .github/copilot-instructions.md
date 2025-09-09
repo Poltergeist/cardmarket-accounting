@@ -10,6 +10,59 @@ This is a TypeScript CLI tool that processes Cardmarket data exports (CSV files)
 **Package Manager**: pnpm 10+ (REQUIRED - npm/yarn not recommended)
 **Architecture**: Modular with core/, features/, infrastructure/ separation
 
+## Commit Message Requirements - IMPORTANT!
+
+**CRITICAL**: This project enforces [Conventional Commits](https://www.conventionalcommits.org/) for ALL commits. You must follow this format:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Required Types:
+
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding/updating tests
+- `build`: Build system changes (dependencies, etc.)
+- `ci`: CI configuration changes
+- `chore`: Other changes (maintenance, etc.)
+- `revert`: Reverting previous commits
+
+### Commit Examples:
+
+```bash
+feat: add CSV import functionality for Cardmarket orders
+fix: handle empty CSV files gracefully
+docs: update README with installation instructions
+test: add unit tests for HledgerFormatter
+build: upgrade TypeScript to 5.8.3
+ci: add commit message validation workflow
+chore: update dependencies to latest versions
+```
+
+### Breaking Changes:
+
+For breaking changes, add `!` after type or use `BREAKING CHANGE:` in footer:
+
+```bash
+feat!: remove deprecated CLI options
+# or
+feat: add new authentication system
+
+BREAKING CHANGE: removes the old API key authentication method
+```
+
+**Local Validation**: Husky will validate your commit messages
+**CI Validation**: GitHub Actions will reject non-conformant commits
+
 ## Prerequisites and Environment Setup
 
 **CRITICAL**: This project requires pnpm 10+. The packageManager field in package.json specifies pnpm@10.11.0. While npm may work, pnpm is the recommended and tested package manager.
