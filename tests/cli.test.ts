@@ -19,6 +19,7 @@ describe("CLI Integration Tests", () => {
     expect(stdout).toContain("import-sales");
     expect(stdout).toContain("import-articles");
     expect(stdout).toContain("parse-orders");
+    expect(stdout).toContain("json-to-ledger");
     expect(stderr).toBe("");
   }, 10000);
 
@@ -52,5 +53,19 @@ describe("CLI Integration Tests", () => {
         "required option '-f, --file <path>' not specified",
       );
     }
+  }, 10000);
+
+  it("should show json-to-ledger command help", async () => {
+    const { stdout, stderr } = await execAsync(
+      `${tsxPath} ${cliPath} json-to-ledger --help`,
+    );
+
+    expect(stdout).toContain(
+      "Generate ledger file from imported JSON orders and articles",
+    );
+    expect(stdout).toContain("--orders-directory");
+    expect(stdout).toContain("--articles-directory");
+    expect(stdout).toContain("--output");
+    expect(stderr).toBe("");
   }, 10000);
 });
