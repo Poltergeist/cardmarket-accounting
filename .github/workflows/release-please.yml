@@ -1,0 +1,26 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+
+      # Optional: Additional steps can be added here for publishing to npm, etc.
+      # - name: Publish to npm
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   run: |
+      #     npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+      #     npm publish

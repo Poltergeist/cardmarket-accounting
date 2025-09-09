@@ -1,5 +1,9 @@
 # Cardmarket Accounting
 
+[![CI](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/ci.yml/badge.svg)](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/ci.yml)
+[![Commitlint](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/commitlint.yml/badge.svg)](https://github.com/Poltergeist/cardmarket-accounting/actions/workflows/commitlint.yml)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
 A TypeScript CLI tool and library to help you turn your Cardmarket data exports (e.g., CSVs) into accounting-ready information. It focuses on parsing sales/purchases, validating rows, and preparing data for downstream bookkeeping or analysis workflows.
 
 Status: Early WIP. Expect breaking changes as features stabilize.
@@ -12,6 +16,8 @@ Status: Early WIP. Expect breaking changes as features stabilize.
 - Modular architecture (core, features, infrastructure) for future extension
 - Run TypeScript directly with `tsx` or compile to JavaScript with `tsc`
 - No external services or credentials required for basic CSV workflows
+- **Automated releases and changelog** generation using [Release Please](https://github.com/googleapis/release-please)
+- **Conventional Commits** enforcement with local and CI validation
 
 ## Getting Started
 
@@ -290,11 +296,13 @@ Test coverage reports are automatically generated and can be uploaded to Codecov
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome! This project follows [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and uses automated tools to enforce code quality.
+
+### Quick Start
 
 1. Fork the repo and create your branch from `main`:
    ```bash
-   git checkout -b feat/your-feature
+   git checkout -b feat/your-feature-name
    ```
 2. Install dependencies and run the full validation suite:
    ```bash
@@ -304,13 +312,52 @@ Contributions are welcome!
    pnpm run format:check
    pnpm test
    ```
-3. Format your changes:
+3. Make your changes following our guidelines
+4. Commit using [Conventional Commits](https://www.conventionalcommits.org/) format:
    ```bash
-   pnpm run format
+   git commit -m "feat: add new awesome feature"
    ```
-4. Commit with clear messages and open a pull request.
+5. Push and open a pull request
 
-Suggestions that add automated tests and basic CI are especially appreciated.
+### Commit Message Format
+
+All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Examples:**
+
+- `feat: add CSV export functionality`
+- `fix: resolve parsing error with empty rows`
+- `docs: update installation instructions`
+- `feat!: change default output format` (breaking change)
+
+**Automated enforcement:**
+
+- **Local**: Husky hooks validate commit messages and run quality checks
+- **CI/CD**: GitHub Actions validate all commits on push/PR
+- **Releases**: [Release Please](https://github.com/googleapis/release-please) generates changelogs and versions based on commit messages
+
+### Detailed Guidelines
+
+For comprehensive information about contributing, commit message examples, development setup, and our release process, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Code Quality
+
+The project enforces quality through:
+
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **TypeScript** for type safety
+- **Jest** for testing
+- **Husky** for git hook automation
+- **GitHub Actions** for CI/CD validation
 
 ## License
 
