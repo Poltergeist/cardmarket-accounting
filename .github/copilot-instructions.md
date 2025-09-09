@@ -203,7 +203,80 @@ pnpm exec tsc --noEmit
 - `typescript` - TypeScript compiler
 - `prettier` - Code formatting
 - `@types/node` - Node.js type definitions
+- `@commitlint/cli` - Commit message linting
+- `@commitlint/config-conventional` - Conventional commit rules
+- `husky` - Git hooks automation
+
+## Commit Message Requirements
+
+**CRITICAL**: This project enforces [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for ALL commit messages.
+
+### Required Format
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Valid Types
+
+- `feat` - New features
+- `fix` - Bug fixes
+- `docs` - Documentation changes
+- `style` - Code formatting changes
+- `refactor` - Code changes that don't fix bugs or add features
+- `perf` - Performance improvements
+- `test` - Test additions or modifications
+- `build` - Build system changes
+- `ci` - CI/CD configuration changes
+- `chore` - Other changes that don't modify src or test files
+- `revert` - Reverting previous commits
+
+### Examples
+
+```bash
+feat: add CSV export functionality
+fix: resolve parsing error with empty CSV rows
+docs: update installation instructions
+feat(cli): add new import command
+fix(parser): handle malformed dates
+feat!: change default output format (breaking change)
+```
+
+### Breaking Changes
+
+Use `!` after type or include `BREAKING CHANGE:` in footer:
+
+```bash
+feat!: remove legacy CSV format support
+# OR
+feat: update API interface
+
+BREAKING CHANGE: The old parseCSV function has been removed.
+Use the new CSVParser class instead.
+```
+
+### Enforcement
+
+- **Local**: Husky commit-msg hook validates format before commit
+- **CI/CD**: GitHub Actions validate all commits on push/PR
+- **Automated**: Release Please generates changelogs from commits
+
+### Testing Commit Messages
+
+```bash
+# Test a commit message
+echo "feat: add new feature" | pnpm exec commitlint
+
+# Run commitlint on staged changes
+pnpm exec commitlint --edit
+```
+
+**IMPORTANT**: Commits that don't follow this format will be rejected both locally and in CI. Always use conventional commit format.
 
 ## TRUST THESE INSTRUCTIONS
 
-The information in this file has been validated by running commands and exploring the codebase. Only search for additional information if these instructions are incomplete or found to be incorrect. The project structure, build commands, and current limitations are accurately documented here.
+The information in this file has been validated by running commands and exploring the codebase. Only search for additional information if these instructions are incomplete or found to be incorrect. The project structure, build commands, current limitations, and commit message requirements are accurately documented here.
