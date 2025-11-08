@@ -105,7 +105,7 @@ export class JsonOrdersToLedgerMapper {
           comment: "Shipping revenue",
         },
         {
-          account: "Assets:Cardmarket:Receivable:shipping",
+          account: "Assets:Cardmarket:Receivable:Shipping",
           amount: order["Shipment Costs"],
           currency,
           comment: "Shipping revenue",
