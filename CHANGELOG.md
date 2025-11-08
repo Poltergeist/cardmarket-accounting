@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/Poltergeist/cardmarket-accounting/compare/v1.0.0...v1.0.1) (2025-11-08)
+
+
+### Bug Fixes
+
+* change shipping account name to fit the convetion ([09e9333](https://github.com/Poltergeist/cardmarket-accounting/commit/09e93336251188d81de408f8312fc8d3f830d7b6))
+* markdown styling ([a5f75b8](https://github.com/Poltergeist/cardmarket-accounting/commit/a5f75b88854dc25d784a5304382a909744752a08))
+
 ## 1.0.0 (2025-09-09)
 
 ### Features
